@@ -30,7 +30,7 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Hello, $firstName 👋',
+                    Text('Hello, $firstName <3',
                         style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w800)),
                     const SizedBox(height: 4),
                     Text(

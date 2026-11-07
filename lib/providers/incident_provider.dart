@@ -150,6 +150,23 @@ class IncidentProvider extends ChangeNotifier {
   int countByStatus(String status) =>
     _incidents.where((i) => i.status == status).length;
 
+  Future<bool> updateStatus(String id, String status) async {
+    final user = _user;
+    if (user == null || !user.isStaff) {
+      _error = 'Only staff can update report status.';
+      notifyListeners();
+      return false;
+    }
+    try {
+      await _service.updateStatus(id, status, user.name);
+      return true;
+    } catch (_) {
+      _error = 'Could not update status.';
+      notifyListeners();
+      return false;
+    }
+  }
+
   @override
   void dispose() {
     _sub?.cancel();

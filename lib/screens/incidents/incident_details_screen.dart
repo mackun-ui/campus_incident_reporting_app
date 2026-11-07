@@ -7,6 +7,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/incident_provider.dart';
 import '../../widgets/status_badge.dart';
 import '../../widgets/status_timeline.dart';
+import '../../core/utils/category_utils.dart';
 
 class IncidentDetailsScreen extends StatelessWidget {
   final String incidentId;
@@ -35,6 +36,18 @@ class IncidentDetailsScreen extends StatelessWidget {
           .showSnackBar(SnackBar(content: Text(provider.error ?? 'Delete failed')));
     }
   }
+
+  Future<void> _changeStatus(BuildContext context, Incident incident, String status) async {
+    if (incident.status == status) return;
+    final provider = context.read<IncidentProvider>();
+    final ok = await provider.updateStatus(incident.id, status);
+    if (!context.mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(ok ? 'Status updated to ${statusLabel(status)}' : (provider.error ?? 'Update failed')),
+    ));
+}
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +91,22 @@ class IncidentDetailsScreen extends StatelessWidget {
           const SizedBox(height: 24),
           _sectionTitle('Status Timeline'),
           StatusTimeline(incident: incident),
+
+          if (auth.isStaff) ...[
+            const SizedBox(height: 24),
+            _sectionTitle('Update status (staff only)'),
+            Wrap(
+              spacing: 8,
+              children: AppConstants.statuses
+                .map((s) => ChoiceChip(
+                  label: Text(statusLabel(s)),
+                  selected: incident.status == s,
+                  onSelected: (_) => _changeStatus(context, incident, s),
+                ))
+                .toList(),
+            ),
+          ],
+
           const SizedBox(height: 24),
           _sectionTitle('Description'),
           Text(incident.description),
