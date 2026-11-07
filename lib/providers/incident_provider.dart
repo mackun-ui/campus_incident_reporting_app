@@ -29,6 +29,10 @@ class IncidentProvider extends ChangeNotifier {
     _user = user;
     _sub?.cancel();
     _incidents = [];
+    _query = '';
+    _statusFilter = null;
+    _categoryFilter = null;
+
     if (user == null) {
       _loading = false;
       return;
@@ -104,6 +108,41 @@ class IncidentProvider extends ChangeNotifier {
       notifyListeners();
       return false;
     }
+  }
+
+  String _query = '';
+  String? _statusFilter;
+  String? _categoryFilter;
+
+  String? get statusFilter => _statusFilter;
+  String? get categoryFilter => _categoryFilter;
+
+  List<Incident> get filtered {
+    final q = _query.trim().toLowerCase();
+    return _incidents.where((i) {
+      final matchesQuery = q.isEmpty ||
+        i.title.toLowerCase().contains(q) ||
+        i.description.toLowerCase().contains(q) ||
+        i.location.toLowerCase().contains(q);
+      final matchesStatus = _statusFilter == null || i.status == _statusFilter;
+      final matchesCategory = _categoryFilter == null || i.category == _categoryFilter;
+      return matchesQuery && matchesStatus && matchesCategory;
+    }).toList();
+  }
+
+  void setQuery(String value) {
+    _query = value;
+    notifyListeners();
+  }
+
+  void setStatusFilter(String? value) {
+    _statusFilter = value;
+    notifyListeners();
+  }
+
+  void setCategoryFilter(String? value) {
+    _categoryFilter = value;
+    notifyListeners();
   }
 
   @override
