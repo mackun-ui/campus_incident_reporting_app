@@ -13,8 +13,7 @@ class AppConstants {
   static const statusInProgress = 'in_progress';
   static const statusResolved = 'resolved';
   static const statuses = [statusSubmitted, statusInProgress, statusResolved];
-
-  // Cloudinary (fill in yours)
+  
   static const cloudinaryCloudName = 'tvpwvfgb';
   static const cloudinaryUploadPreset = 'campus_incidents';
 }
