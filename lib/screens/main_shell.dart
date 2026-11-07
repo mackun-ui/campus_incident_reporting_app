@@ -3,7 +3,7 @@ import '../core/theme/app_theme.dart';
 import 'home/home_screen.dart';
 import 'profile/profile_screen.dart';
 import 'report/report_incident_screen.dart';
-import 'reports/reports_screen.dart';
+import 'reports/reports_screens.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
