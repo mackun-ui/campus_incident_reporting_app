@@ -5,6 +5,7 @@ import '../models/incident_model.dart';
 import '../models/user_model.dart';
 import '../services/cloudinary_service.dart';
 import '../services/incident_service.dart';
+import '../core/constants/app_constants.dart';
 
 class IncidentProvider extends ChangeNotifier {
   final _service = IncidentService();
@@ -78,6 +79,30 @@ class IncidentProvider extends ChangeNotifier {
     } finally {
       _submitting = false;
       notifyListeners();
+    }
+  }
+
+  Incident? byId(String id) => _incidents.where((i) => i.id == id).firstOrNull;
+
+  Future<bool> deleteIncident(Incident incident) async {
+    final user = _user;
+    final allowed = user != null &&
+      incident.reportedBy == user.uid &&
+      incident.status == AppConstants.statusSubmitted;
+
+    if (!allowed) {
+      _error = 'You can only delete your own reports that are still Submitted.';
+      notifyListeners();
+      return false;
+    }
+
+    try {
+      await _service.delete(incident.id);
+      return true;
+    } catch (_) {
+      _error = 'Could not delete the report.';
+      notifyListeners();
+      return false;
     }
   }
 
