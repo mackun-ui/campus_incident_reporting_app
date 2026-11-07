@@ -7,13 +7,21 @@ import 'providers/auth_provider.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/verify_email_screen.dart';
 import 'screens/home/home_screen.dart';
+import 'providers/incident_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => AuthProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProxyProvider<AuthProvider, IncidentProvider>(
+          create: (_) => IncidentProvider(),
+          update: (_, auth, incidents) =>
+            incidents!..bindUser(auth.isVerified ? auth.profile : null),
+        ),
+      ],
       child: const CampusIncidentApp(),
     ),
   );
