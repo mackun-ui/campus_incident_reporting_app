@@ -1,0 +1,82 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../core/utils/validators.dart';
+import '../../providers/auth_provider.dart';
+
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _name = TextEditingController();
+  final _email = TextEditingController();
+  final _password = TextEditingController();
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+    final auth = context.read<AuthProvider>();
+    final ok = await auth.register(_name.text.trim(), _email.text.trim(), _password.text);
+    if (!mounted) return;
+    if (ok) {
+      Navigator.of(context).popUntil((r) => r.isFirst);
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(auth.error ?? 'Registration failed')));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final loading = context.watch<AuthProvider>().isLoading;
+    return Scaffold(
+      appBar: AppBar(title: const Text('Create account')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                controller: _name,
+                decoration: const InputDecoration(labelText: 'Full name'),
+                validator: (v) => Validators.required(v, 'Name'),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _email,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(labelText: 'ALU email'),
+                validator: Validators.aluEmail,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _password,
+                obscureText: true,
+                decoration: const InputDecoration(labelText: 'Password'),
+                validator: Validators.password,
+              ),
+              const SizedBox(height: 24),
+              FilledButton(
+                onPressed: loading ? null : _submit,
+                child: loading
+                    ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                    : const Text('Register'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
