@@ -27,3 +27,14 @@ String statusLabel(String status) {
       return 'Submitted';
   }
 }
+
+Color statusColor(String status) {
+  switch (status) {
+    case 'in_progress':
+      return Colors.blue;
+    case 'resolved':
+      return Colors.green;
+    default:
+      return Colors.orange;
+  }
+}
