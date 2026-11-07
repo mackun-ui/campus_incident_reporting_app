@@ -68,6 +68,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> checkVerified() async {
     await _service.reloadUser();
+    _firebaseUser = _service.currentUser;
     notifyListeners();
   }
 

@@ -8,6 +8,7 @@ class AuthService {
   final _db = FirebaseFirestore.instance;
 
   Stream<User?> get authChanges => _auth.authStateChanges();
+  User? get currentUser => _auth.currentUser;
 
   Future<void> register(String name, String email, String password) async {
     final cred = await _auth.createUserWithEmailAndPassword(email: email, password: password);
