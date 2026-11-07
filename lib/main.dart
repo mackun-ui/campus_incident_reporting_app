@@ -6,7 +6,7 @@ import 'firebase_options.dart';
 import 'providers/auth_provider.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/verify_email_screen.dart';
-import 'screens/home/home_screen.dart';
+import 'screens/main_shell.dart';
 import 'providers/incident_provider.dart';
 
 Future<void> main() async {
@@ -50,6 +50,6 @@ class AuthGate extends StatelessWidget {
     }
     if (!auth.isLoggedIn) return const LoginScreen();
     if (!auth.isVerified) return const VerifyEmailScreen();
-    return const HomeScreen();
+    return const MainShell();
   }
 }

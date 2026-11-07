@@ -145,6 +145,11 @@ class IncidentProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  int get total => _incidents.length;
+
+  int countByStatus(String status) =>
+    _incidents.where((i) => i.status == status).length;
+
   @override
   void dispose() {
     _sub?.cancel();
